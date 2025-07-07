@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio</title>
+    <title>Productos</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1 th:text="${mensaje}">Cargando...</h1>
+    <header>
+        <h1>Gestión de Productos</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/productos">Ver Productos</a></li>
+            <li><a href="/productos/nuevo">Añadir Producto</a></li>
+            <li><a href="/categorias">Ver Categorías</a></li>
+            <li><a href="/categorias/nueva">Añadir Categoría</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1><span th:text="${mensaje}"></span></h1>
+    </div>
 </body>
 </html>

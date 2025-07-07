@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Inventario</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a th:href="@{/inventario}">Inventarios</a></li>
+            <li><a th:href="@{/inventario/nuevo}">Nuevo Inventario</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2>Bienvenido al Servicio de Inventario</h2>
+        <p>Utilice la barra de navegación para acceder a las funcionalidades de gestión de inventario.</p>
+    </div>
+    <footer>
+        <p>&copy; 2024 Gestión de Inventario</p>
+    </footer>
+</body>
+</html>

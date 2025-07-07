@@ -3,6 +3,7 @@ package com.ejemplo.service.impl;
 import com.ejemplo.model.Producto;
 import com.ejemplo.repository.ProductoRepository;
 import com.ejemplo.service.ProductoService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,8 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+
 
     @Override
     public List<Producto> findAll() {
@@ -33,5 +36,10 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public void deleteById(Long id) {
         productoRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Producto> findByCategoriaId(Long categoriaId) {
+        return productoRepository.findByCategoriaId(categoriaId);
     }
 }

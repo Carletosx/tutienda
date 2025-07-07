@@ -9,7 +9,7 @@ version = '1.0.0'
 sourceCompatibility = '17'
 
 ext {
-    set('springCloudVersion', "2023.0.2")
+    set('springCloudVersion', "2023.0.0")
 }
 
 repositories {
@@ -24,4 +24,7 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
+}
+bootRun {
+    mainClass = 'com.ejemplo.Application'
 }

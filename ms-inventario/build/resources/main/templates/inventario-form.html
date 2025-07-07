@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${inventario.id == null ? 'Nuevo Inventario' : 'Editar Inventario'}"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Inventario</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a th:href="@{/inventario}">Inventarios</a></li>
+            <li><a th:href="@{/inventario/nuevo}">Nuevo Inventario</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2 th:text="${inventario.id == null ? 'Crear Nuevo Inventario' : 'Editar Inventario'}"></h2>
+        <form th:action="@{/inventario/guardar}" th:object="${inventario}" method="post">
+            <input type="hidden" th:field="*{id}" />
+            <div class="form-group">
+                <label for="productoId">ID de Producto:</label>
+                <input type="number" id="productoId" th:field="*{productoId}" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="stockActual">Stock Actual:</label>
+                <input type="number" id="stockActual" th:field="*{stockActual}" class="form-control" required />
+            </div>
+            <button type="submit" class="button submit">Guardar</button>
+            <a th:href="@{/inventario}" class="button cancel">Cancelar</a>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2024 Gestión de Inventario</p>
+    </footer>
+</body>
+</html>

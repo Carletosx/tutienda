@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Producto</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/producto-detalle.css}">
+</head>
+<body>
+    <div class="producto-detalle">
+        <h2 th:text="${producto.nombre}">Nombre del Producto</h2>
+        
+        <div class="producto-info">
+            <p class="categoria" th:text="'Categoría: ' + ${producto.categoria.nombre}">Categoría</p>
+            <p class="precio" th:text="'Precio: S/. ' + ${producto.precio}">Precio</p>
+            <p class="stock" th:text="'Stock disponible: ' + ${producto.stockDisponible}">Stock</p>
+            
+            <div class="descripcion">
+                <h3>Descripción:</h3>
+                <p th:text="${producto.descripcion}">Descripción del producto</p>
+            </div>
+
+            <div class="cantidad-control">
+                <button onclick="decrementarCantidad()">-</button>
+                <input type="number" id="cantidad" value="1" min="1" th:max="${producto.stockDisponible}">
+                <button onclick="incrementarCantidad()">+</button>
+            </div>
+
+            <button class="agregar-carrito" th:onclick="'agregarAlCarrito(' + ${producto.id} + ')'">
+                Agregar al carrito
+            </button>
+        </div>
+
+        <a th:href="@{/tienda}" class="volver-link">← Volver a la tienda</a>
+    </div>
+
+    <script th:inline="javascript">
+        const stockDisponible = [[$producto.stockDisponible]];
+    </script>
+    <script th:src="@{/js/producto-detalle.js}"></script>
+</body>
+</html>

@@ -3,13 +3,12 @@ package com.ejemplo.controller;
 import com.ejemplo.model.Inventario;
 import com.ejemplo.service.InventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Optional;
-
-@RestController
+@Controller
 @RequestMapping("/inventario")
 public class InventarioController {
 
@@ -17,53 +16,35 @@ public class InventarioController {
     private InventarioService inventarioService;
 
     @GetMapping
-    public ResponseEntity<List<Inventario>> getAllInventario() {
-        List<Inventario> inventarios = inventarioService.findAll();
-        return ResponseEntity.ok(inventarios);
+    public String getAllInventarios(Model model) {
+        model.addAttribute("inventarios", inventarioService.findAll());
+        return "inventario";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Inventario> getInventarioById(@PathVariable Long id) {
-        Optional<Inventario> inventario = inventarioService.findById(id);
-        return inventario.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/nuevo")
+    public String showCreateForm(Model model) {
+        model.addAttribute("inventario", new Inventario());
+        return "inventario-form";
     }
 
-    @GetMapping("/producto/{productoId}")
-    public ResponseEntity<Inventario> getInventarioByProductoId(@PathVariable Long productoId) {
-        Inventario inventario = inventarioService.getInventarioByProductoId(productoId);
-        if (inventario != null) {
-            return ResponseEntity.ok(inventario);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/editar/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        inventarioService.findById(id).ifPresent(inventario -> 
+            model.addAttribute("inventario", inventario));
+        return "inventario-form";
     }
 
-    @PostMapping
-    public ResponseEntity<Inventario> createInventario(@RequestBody Inventario inventario) {
-        Inventario newInventario = inventarioService.save(inventario);
-        return ResponseEntity.ok(newInventario);
+    @PostMapping("/guardar")
+    public String saveInventario(@ModelAttribute Inventario inventario, RedirectAttributes redirectAttributes) {
+        inventarioService.save(inventario);
+        redirectAttributes.addFlashAttribute("mensajeExito", "Inventario guardado exitosamente!");
+        return "redirect:/inventario";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Inventario> updateInventario(@PathVariable Long id, @RequestBody Inventario inventario) {
-        return inventarioService.findById(id)
-                .map(existingInventario -> {
-                    existingInventario.setProductoId(inventario.getProductoId());
-                    existingInventario.setStockActual(inventario.getStockActual());
-                    return ResponseEntity.ok(inventarioService.save(existingInventario));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/updateStock/{productoId}")
-    public ResponseEntity<Inventario> updateStock(@PathVariable Long productoId, @RequestParam int cantidad) {
-        Inventario updatedInventario = inventarioService.updateStock(productoId, cantidad);
-        return ResponseEntity.ok(updatedInventario);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInventario(@PathVariable Long id) {
+    @GetMapping("/eliminar/{id}")
+    public String deleteInventario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         inventarioService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        redirectAttributes.addFlashAttribute("mensajeExito", "Inventario eliminado exitosamente!");
+        return "redirect:/inventario";
     }
 }

@@ -1,10 +1,90 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Carrito</title></head>
-<body>
-<h1>Carrito de Compras</h1>
-<ul>
-    <li th:each="prod : ${productos}" th:text="${prod}"></li>
-</ul>
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Carrito de Compras</h1>
+                
+                <!-- Formulario para agregar productos -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Agregar Producto</h5>
+                        <form th:action="@{/carrito/{usuarioId}/agregar(usuarioId=${usuarioId})}" method="post" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="productoId" class="form-label">ID del Producto</label>
+                                <input type="number" class="form-control" id="productoId" name="productoId" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cantidad" class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="cantidad" name="cantidad" value="1" min="1" required>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary">Agregar al Carrito</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Lista de productos en el carrito -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Productos en el Carrito</h5>
+                        <div th:if="${carrito.items.empty}" class="alert alert-info">
+                            El carrito está vacío
+                        </div>
+                        <div th:if="${!carrito.items.empty}" class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Cantidad</th>
+                                        <th>Subtotal</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${carrito.items}">
+                                        <td th:text="${item.nombreProducto}"></td>
+                                        <td th:text="${#numbers.formatCurrency(item.precioUnitario)}"></td>
+                                        <td th:text="${item.cantidad}"></td>
+                                        <td th:text="${#numbers.formatCurrency(item.subtotal)}"></td>
+                                        <td>
+                                            <form th:action="@{/carrito/{usuarioId}/eliminar/{productoId}(usuarioId=${usuarioId},productoId=${item.productoId})}" method="post" style="display: inline;">
+                                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                                        <td th:text="${#numbers.formatCurrency(carrito.total)}" class="fw-bold"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            
+                            <div class="d-flex justify-content-end mt-3">
+                                <form th:action="@{/carrito/{usuarioId}/limpiar(usuarioId=${usuarioId})}" method="post">
+                                    <button type="submit" class="btn btn-warning">Limpiar Carrito</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

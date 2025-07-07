@@ -28,7 +28,6 @@ public class InventarioServiceImpl implements InventarioService {
 
     @Override
     public Inventario save(Inventario inventario) {
-        inventario.setUltimaActualizacion(LocalDateTime.now());
         return inventarioRepository.save(inventario);
     }
 
@@ -39,10 +38,16 @@ public class InventarioServiceImpl implements InventarioService {
 
     @Override
     public Inventario updateStock(Long productoId, int cantidad) {
-        Inventario inventario = inventarioRepository.findByProductoId(productoId)
-                .orElse(new Inventario(productoId, 0)); // Create new if not found
-        inventario.setStockActual(inventario.getStockActual() + cantidad);
-        inventario.setUltimaActualizacion(LocalDateTime.now());
+        Inventario inventario = getInventarioByProductoId(productoId);
+        if (inventario == null) {
+            inventario = new Inventario();
+            inventario.setProductoId(productoId);
+            inventario.setStockActual(cantidad);
+            inventario.setUltimaActualizacion(LocalDateTime.now());
+        } else {
+            inventario.setStockActual(cantidad);
+            inventario.setUltimaActualizacion(LocalDateTime.now());
+        }
         return inventarioRepository.save(inventario);
     }
 

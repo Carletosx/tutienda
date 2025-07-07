@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestión de Inventario</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <h1>Gestión de Inventario</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/inventario">Ver Inventario</a></li>
+            <li><a href="/inventario/nuevo">Añadir Inventario</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="messages" th:if="${mensajeExito}">
+            <div class="alert alert-success" th:text="${mensajeExito}"></div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Producto ID</th>
+                        <th>Stock Actual</th>
+                        <th>Última Actualización</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${inventarios.empty}">
+                        <td colspan="5">No hay registros de inventario</td>
+                    </tr>
+                    <tr th:each="inventario : ${inventarios}">
+                        <td th:text="${inventario.id}"></td>
+                        <td th:text="${inventario.productoId}"></td>
+                        <td th:text="${inventario.stockActual}"></td>
+                        <td th:text="${#temporals.format(inventario.ultimaActualizacion, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/inventario/editar/{id}(id=${inventario.id})}" class="btn-editar">Editar</a>
+                            <a th:href="@{/inventario/eliminar/{id}(id=${inventario.id})}" class="btn-eliminar"
+                               onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?')">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

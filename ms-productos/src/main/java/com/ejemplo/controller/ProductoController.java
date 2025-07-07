@@ -3,57 +3,58 @@ package com.ejemplo.controller;
 import com.ejemplo.model.Producto;
 import com.ejemplo.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.ejemplo.service.CategoriaService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
-@RestController
+
+@Controller
 @RequestMapping("/productos")
 public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
 
+    @Autowired
+    private CategoriaService categoriaService;
+
     @GetMapping
-    public List<Producto> getAllProductos() {
-        return productoService.findAll();
+    public String getAllProductos(Model model) {
+        model.addAttribute("productos", productoService.findAll());
+        return "productos";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
-        return productoService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/nuevo")
+    public String showCreateForm(Model model) {
+        model.addAttribute("producto", new Producto());
+        model.addAttribute("categorias", categoriaService.findAll());
+        return "producto-form";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        productoService.findById(id).ifPresent(producto -> model.addAttribute("producto", producto));
+        model.addAttribute("categorias", categoriaService.findAll());
+        return "producto-form";
     }
 
     @PostMapping
-    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
-        return new ResponseEntity<>(productoService.save(producto), HttpStatus.CREATED);
+    public String saveProducto(@ModelAttribute Producto producto, RedirectAttributes redirectAttributes) {
+        productoService.save(producto);
+        redirectAttributes.addFlashAttribute("message", "Producto guardado exitosamente!");
+        return "redirect:/productos";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
-        return productoService.findById(id)
-                .map(existingProducto -> {
-                    existingProducto.setNombre(producto.getNombre());
-                    existingProducto.setDescripcion(producto.getDescripcion());
-                    existingProducto.setPrecio(producto.getPrecio());
-                    existingProducto.setStock(producto.getStock());
-                    existingProducto.setCategoria(producto.getCategoria());
-                    return ResponseEntity.ok(productoService.save(existingProducto));
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
-        if (productoService.findById(id).isPresent()) {
-            productoService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+
+    @GetMapping("/eliminar/{id}")
+    public String deleteProducto(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        productoService.deleteById(id);
+        redirectAttributes.addFlashAttribute("message", "Producto eliminado exitosamente!");
+        return "redirect:/productos";
     }
 }

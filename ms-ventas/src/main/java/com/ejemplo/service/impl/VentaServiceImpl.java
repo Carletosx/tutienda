@@ -24,7 +24,7 @@ public class VentaServiceImpl implements VentaService {
     private RestTemplate restTemplate;
 
     private final String CARRITO_SERVICE_URL = "http://ms-carrito/carritos/";
-    private final String PRODUCTO_SERVICE_URL = "http://ms-productos/productos/";
+
 
     @Override
     public List<Venta> findAll() {
@@ -50,7 +50,7 @@ public class VentaServiceImpl implements VentaService {
     public Venta createVentaFromCarrito(Long usuarioId) {
         // 1. Obtener el carrito del usuario desde ms-carrito
         // Using LinkedHashMap to correctly cast the response from RestTemplate
-        LinkedHashMap<String, Object> carritoResponse = restTemplate.getForObject(CARRITO_SERVICE_URL + usuarioId, LinkedHashMap.class);
+        LinkedHashMap<String, Object> carritoResponse = (LinkedHashMap<String, Object>) restTemplate.getForObject(CARRITO_SERVICE_URL + usuarioId, LinkedHashMap.class);
 
         if (carritoResponse == null || !carritoResponse.containsKey("items")) {
             throw new RuntimeException("Carrito no encontrado o vacío para el usuario: " + usuarioId);
